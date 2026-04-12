@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Lora", serif;
+    --font-body: "DM Sans", sans-serif;
+    --font-mono: "Geist Mono", monospace;
+    --radius: 0.75rem;
+
+    --background: 0.995 0 0;
+    --foreground: 0.18 0 0;
+    --card: 1.0 0 0;
+    --card-foreground: 0.18 0 0;
+    --popover: 1.0 0 0;
+    --popover-foreground: 0.18 0 0;
+
+    --primary: 0.45 0.15 260;
+    --primary-foreground: 0.98 0 0;
+
+    --secondary: 0.92 0.08 268;
+    --secondary-foreground: 0.18 0 0;
+    --muted: 0.93 0 0;
+    --muted-foreground: 0.48 0 0;
+
+    --accent: 0.58 0.2 335;
+    --accent-foreground: 0.98 0 0;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.88 0 0;
+    --input: 0.95 0.04 280;
+    --ring: 0.45 0.15 260;
+
+    --chart-1: 0.45 0.15 260;
+    --chart-2: 0.58 0.2 335;
+    --chart-3: 0.52 0.18 315;
+    --chart-4: 0.68 0.1 240;
+    --chart-5: 0.75 0.12 210;
+
+    --sidebar: 0.98 0 0;
+    --sidebar-foreground: 0.18 0 0;
+    --sidebar-primary: 0.45 0.15 260;
+    --sidebar-primary-foreground: 0.98 0 0;
+    --sidebar-accent: 0.92 0.08 268;
+    --sidebar-accent-foreground: 0.18 0 0;
+    --sidebar-border: 0.88 0 0;
+    --sidebar-ring: 0.45 0.15 260;
+  }
+
+  .dark {
+    --background: 0.12 0 0;
+    --foreground: 0.95 0 0;
+    --card: 0.15 0 0;
+    --card-foreground: 0.95 0 0;
+    --popover: 0.18 0 0;
+    --popover-foreground: 0.95 0 0;
+
+    --primary: 0.7 0.14 260;
+    --primary-foreground: 0.12 0 0;
+
+    --secondary: 0.2 0.06 268;
+    --secondary-foreground: 0.88 0 0;
+    --muted: 0.2 0 0;
+    --muted-foreground: 0.55 0 0;
+
+    --accent: 0.68 0.18 335;
+    --accent-foreground: 0.12 0 0;
+
+    --destructive: 0.65 0.19 22;
+    --destructive-foreground: 0.12 0 0;
+
+    --border: 0.25 0 0;
+    --input: 0.22 0.04 280;
+    --ring: 0.7 0.14 260;
+
+    --chart-1: 0.7 0.14 260;
+    --chart-2: 0.68 0.18 335;
+    --chart-3: 0.62 0.16 315;
+    --chart-4: 0.55 0.12 240;
+    --chart-5: 0.65 0.14 210;
+
+    --sidebar: 0.15 0 0;
+    --sidebar-foreground: 0.95 0 0;
+    --sidebar-primary: 0.7 0.14 260;
+    --sidebar-primary-foreground: 0.12 0 0;
+    --sidebar-accent: 0.2 0.06 268;
+    --sidebar-accent-foreground: 0.88 0 0;
+    --sidebar-border: 0.25 0 0;
+    --sidebar-ring: 0.7 0.14 260;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/DMSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lora";
+  src: url("/assets/fonts/Lora.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-display: swap;
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .gradient-hospital {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--primary)) 0%,
+      oklch(var(--accent)) 100%
+    );
+  }
+
+  .shadow-hospital {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px
+      rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-hospital-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px
+      rgba(0, 0, 0, 0.05);
+  }
+
+  .card-elevated {
+    @apply bg-card shadow-hospital rounded-lg border border-border;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium transition-smooth hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-medium transition-smooth hover:bg-secondary/90;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground px-4 py-2 rounded-lg font-medium transition-smooth hover:opacity-90;
+  }
+}

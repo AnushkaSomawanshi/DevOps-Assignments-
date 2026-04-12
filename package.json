@@ -1,0 +1,18 @@
+{
+  "name": "gynecare-hospital-mern",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "npm --prefix client run build",
+    "typecheck": "npm --prefix client run typecheck",
+    "check": "npm --prefix client run check",
+    "fix": "npm --prefix client run fix",
+    "client": "npm --prefix client run dev",
+    "server": "npm --prefix server run dev"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.4"
+  }
+}
