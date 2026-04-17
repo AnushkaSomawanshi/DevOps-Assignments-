@@ -10,6 +10,9 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import hospitalRoutes from "./routes/hospitalRoutes.js";
 import packageRoutes from "./routes/packageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import chatbotRoutes from "./routes/chatbot.js";
+import analyticsRoutes from "./routes/analytics.js";
+import reportsRoutes from "./routes/reports.js";
 
 dotenv.config();
 
@@ -31,6 +34,9 @@ app.use("/api/hospitals", hospitalRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/reports", reportsRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

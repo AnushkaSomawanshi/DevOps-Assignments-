@@ -101,6 +101,10 @@ export async function fetchAppointments(params?: {
   return request<Appointment[]>(`/appointments${query ? `?${query}` : ""}`);
 }
 
+export async function fetchDoctorAppointments(doctorId: string) {
+  return request<Appointment[]>(`/appointments/doctor/${encodeURIComponent(doctorId)}`);
+}
+
 export async function fetchAppointmentById(id: string) {
   return request<Appointment>(`/appointments/${id}`);
 }

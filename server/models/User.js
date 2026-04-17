@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema(
     active: { type: Boolean, default: true },
     speciality: String,
     qualifications: String,
+    doctorId: String,
   },
   { versionKey: false }
 );

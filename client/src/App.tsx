@@ -44,6 +44,8 @@ const AdminDashboardPage = lazy(
   () => import("@/pages/dashboard/AdminDashboard"),
 );
 const VideosPage = lazy(() => import("@/pages/Videos"));
+const AnalyticsDashboardPage = lazy(() => import("@/components/AnalyticsDashboard"));
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 // ─── Auth guard helper ────────────────────────────────────────────────────────
 
@@ -173,6 +175,16 @@ const aboutRoute = createRoute({
   component: () => (
     <SuspensePage>
       <AboutPage />
+    </SuspensePage>
+  ),
+});
+
+const analyticsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/analytics",
+  component: () => (
+    <SuspensePage>
+      <AnalyticsDashboardPage />
     </SuspensePage>
   ),
 });
@@ -359,6 +371,7 @@ const routeTree = rootRoute.addChildren([
   patientDashboardRoute,
   doctorDashboardRoute,
   adminDashboardRoute,
+  analyticsRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -373,6 +386,7 @@ export default function App() {
   return (
     <AuthProvider>
       <RouterProvider router={router} />
+      <ChatbotWidget />
     </AuthProvider>
   );
 }

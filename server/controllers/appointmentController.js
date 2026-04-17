@@ -27,6 +27,13 @@ export async function listAppointments(req, res) {
   res.json(appointments);
 }
 
+export async function listDoctorAppointments(req, res) {
+  const appointments = await Appointment.find({ doctorId: req.params.doctorId })
+    .sort({ date: 1, timeSlot: 1 })
+    .lean();
+  res.json(appointments);
+}
+
 export async function getAppointmentById(req, res) {
   const appointment = await Appointment.findOne({ id: req.params.id }).lean();
   if (!appointment) return res.status(404).json({ message: "Appointment not found" });
@@ -35,6 +42,17 @@ export async function getAppointmentById(req, res) {
 
 export async function createAppointment(req, res) {
   const payload = req.body ?? {};
+  const doctorId = payload.doctorId;
+  const patientId = payload.patientId;
+  const date = payload.date;
+  const timeSlot = payload.timeSlot || payload.time;
+
+  if (!doctorId || !patientId || !date || !timeSlot) {
+    return res.status(400).json({
+      message: "doctorId, patientId, date and timeSlot are required",
+    });
+  }
+
   const doctor = await Doctor.findOne({ id: payload.doctorId }).lean();
   const hospital = await Hospital.findOne({ id: payload.hospitalId }).lean();
 
@@ -44,6 +62,11 @@ export async function createAppointment(req, res) {
 
   const appointment = await Appointment.create({
     ...payload,
+    doctorId,
+    patientId,
+    date,
+    timeSlot,
+    time: payload.time || timeSlot,
     id: `apt${Date.now()}`,
     doctorName: payload.doctorName || doctor.name,
     hospitalName: payload.hospitalName || hospital.name,

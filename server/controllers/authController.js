@@ -20,7 +20,21 @@ export async function login(req, res) {
     return res.status(401).json({ message: "Invalid password" });
   }
 
-  res.json(sanitizeUser(user));
+  const safeUser = sanitizeUser(user);
+  if (role === "doctor") {
+    const doctor =
+      (safeUser.doctorId && (await Doctor.findOne({ id: safeUser.doctorId }).lean())) ||
+      (await Doctor.findOne({ name: safeUser.name }).lean());
+
+    if (doctor) {
+      if (!safeUser.doctorId) {
+        await User.updateOne({ id: safeUser.id }, { doctorId: doctor.id });
+      }
+      safeUser.doctorId = doctor.id;
+    }
+  }
+
+  res.json(safeUser);
 }
 
 export async function register(req, res) {
@@ -43,7 +57,7 @@ export async function register(req, res) {
   if (existing) return res.status(409).json({ message: "Email already registered" });
 
   const id = `user-${Date.now()}`;
-  const user = await User.create({
+  const userPayload = {
     id,
     name,
     email: String(email).toLowerCase(),
@@ -55,13 +69,16 @@ export async function register(req, res) {
     active: true,
     speciality: speciality || undefined,
     qualifications: qualifications || undefined,
-  });
+  };
+
+  const user = await User.create(userPayload);
 
   if (role === "doctor") {
     const defaultHospital = await Hospital.findOne().lean();
     if (defaultHospital) {
+      const doctorId = `d-${Date.now()}`;
       await Doctor.create({
-        id: `d-${Date.now()}`,
+        id: doctorId,
         name,
         speciality: speciality || "General Practice",
         qualification: qualifications || "MBBS",
@@ -78,8 +95,15 @@ export async function register(req, res) {
         languages: ["English", "Hindi"],
         expertise: [speciality || "General Practice"],
       });
+      await User.updateOne({ id }, { doctorId });
     }
   }
 
-  res.status(201).json(sanitizeUser(user.toObject()));
+  const safeUser = sanitizeUser(user.toObject());
+  if (role === "doctor") {
+    const mappedDoctor = await Doctor.findOne({ name }).lean();
+    if (mappedDoctor) safeUser.doctorId = mappedDoctor.id;
+  }
+
+  res.status(201).json(safeUser);
 }

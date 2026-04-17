@@ -70,23 +70,29 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const doLogin = async (account: (typeof DEMO_ACCOUNTS)[number]) => {
+  const doLogin = async (account: {
+    role: UserRole;
+    email: string;
+    password?: string;
+    name?: string;
+    phone?: string;
+  }) => {
     setLoading(true);
     const user = await loginUser({
       email: account.email,
       role: account.role,
-      password: password || "demo123",
+      password: account.password || "demo123",
     }).catch(() => ({
       id: `user-${account.role}`,
-      name: account.name,
+      name: account.name || "Demo User",
       email: account.email,
-      phone: account.phone,
+      phone: account.phone || "",
       role: account.role,
       createdAt: new Date().toISOString(),
     }));
     loginAsRole(user);
-    toast.success(`Welcome back, ${account.name.split(" ")[0]}!`);
-    void navigate({ to: ROLE_ROUTES[account.role] });
+    toast.success(`Welcome back, ${user.name.split(" ")[0]}!`);
+    void navigate({ to: ROLE_ROUTES[user.role] });
     setLoading(false);
   };
 
@@ -126,17 +132,15 @@ export default function LoginPage() {
       }
     }
 
-    const demo =
-      DEMO_ACCOUNTS.find((a) => a.email === email) ??
-      DEMO_ACCOUNTS.find((a) => a.role === role);
-    if (!demo) {
-      toast.error("No account found. Try a demo account below.");
-      return;
-    }
-    await doLogin(demo);
+    await doLogin({
+      email,
+      role,
+      password,
+    });
   };
 
-  const loginAsDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) => doLogin(demo);
+  const loginAsDemo = (demo: (typeof DEMO_ACCOUNTS)[number]) =>
+    doLogin({ ...demo, password: "demo123" });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex">

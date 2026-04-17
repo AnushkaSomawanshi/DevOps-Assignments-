@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import {
   Clock,
   Facebook,
-  Heart,
   Instagram,
   Linkedin,
   Mail,
@@ -56,7 +55,6 @@ const SOCIAL_LINKS = [
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const utmLink = `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`;
 
   return (
     <footer className="bg-card border-t border-border" aria-label="Site footer">
@@ -205,20 +203,7 @@ export function Footer() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-primary-foreground/80">
             <p className="flex items-center gap-1">
-              © {year} GyneCare Hospital Network. Made with{" "}
-              <Heart className="h-3 w-3 text-accent fill-current" /> for women's
-              health.
-            </p>
-            <p>
-              Built with{" "}
-              <a
-                href={utmLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-primary-foreground transition-smooth"
-              >
-                caffeine.ai
-              </a>
+              © {year} GyneCare Hospital Network.
             </p>
           </div>
         </div>

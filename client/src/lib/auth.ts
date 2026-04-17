@@ -8,6 +8,8 @@ export const USER_STORAGE_KEY = "gynecare_user_data";
 
 export interface StoredUser {
   id: string;
+  _id?: string;
+  doctorId?: string;
   name: string;
   email: string;
   phone: string;

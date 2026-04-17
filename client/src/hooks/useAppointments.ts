@@ -3,6 +3,7 @@ import {
   createAppointment,
   fetchAppointmentById,
   fetchAppointments,
+  fetchDoctorAppointments,
   fetchAvailableSlots,
 } from "@/lib/api";
 import type { Appointment, BookingData, TimeSlot } from "@/types";
@@ -19,7 +20,7 @@ export function useAppointments(patientId?: string) {
 export function useDoctorAppointments(doctorId?: string) {
   return useQuery<Appointment[]>({
     queryKey: ["doctor-appointments", doctorId],
-    queryFn: () => fetchAppointments(doctorId ? { doctorId } : undefined),
+    queryFn: () => fetchDoctorAppointments(doctorId ?? ""),
     enabled: !!doctorId,
   });
 }

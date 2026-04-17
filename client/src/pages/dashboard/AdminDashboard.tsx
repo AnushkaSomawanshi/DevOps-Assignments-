@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import ReportGenerator from "@/components/ReportGenerator";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -398,6 +399,9 @@ export default function AdminDashboard() {
                     </div>
                   </CardContent>
                 </Card>
+                
+                {/* Advanced Reporting Component */}
+                <ReportGenerator />
               </div>
             )}
 

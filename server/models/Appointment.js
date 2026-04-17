@@ -12,6 +12,7 @@ const appointmentSchema = new mongoose.Schema(
     department: { type: String, required: true },
     date: { type: String, required: true },
     timeSlot: { type: String, required: true },
+    time: { type: String },
     type: { type: String, enum: ["in-person", "teleconsultation"], required: true },
     status: { type: String, enum: ["pending", "confirmed", "completed", "cancelled"], required: true },
     reason: String,

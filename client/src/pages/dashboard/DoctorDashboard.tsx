@@ -174,11 +174,21 @@ function StatusBadge({ status }: { status: string }) {
 export default function DoctorDashboard() {
   const { user, logout } = useAuth();
   const { data: doctors = [] } = useDoctors();
+
+  const resolvedDoctorId =
+    user?.doctorId ??
+    user?._id ??
+    doctors.find((doctor) => doctor.name === user?.name)?.id;
+
   const doctorInfo =
+    doctors.find((doctor) => doctor.id === resolvedDoctorId) ??
     doctors.find((doctor) => doctor.name === user?.name) ??
     doctors.find((doctor) => doctor.id === "d1") ??
     doctors[0];
-  const { isLoading } = useDoctorAppointments(doctorInfo?.id);
+
+  const { data: doctorAppointments = [], isLoading } = useDoctorAppointments(
+    resolvedDoctorId ?? doctorInfo?.id,
+  );
 
   const [activeTab, setActiveTab] = useState<DoctorTab>("today");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -195,7 +205,7 @@ export default function DoctorDashboard() {
   });
 
   const completedToday = completedIds.size;
-  const pendingCount = ALL_APPOINTMENTS_TODAY.filter(
+  const pendingCount = doctorAppointments.filter(
     (a) => a.status === "pending",
   ).length;
 
@@ -272,7 +282,7 @@ export default function DoctorDashboard() {
             {/* Stats strip */}
             <div className="grid grid-cols-3 gap-2 mb-5">
               {[
-                { label: "Today", value: ALL_APPOINTMENTS_TODAY.length },
+                { label: "Today", value: doctorAppointments.length },
                 { label: "Done", value: completedToday },
                 { label: "Pending", value: pendingCount },
               ].map(({ label, value }) => (
@@ -329,7 +339,7 @@ export default function DoctorDashboard() {
                     Today's Appointments
                   </h2>
                   <Badge variant="secondary">
-                    {ALL_APPOINTMENTS_TODAY.length} scheduled
+                    {doctorAppointments.length} scheduled
                   </Badge>
                 </div>
 
@@ -339,7 +349,7 @@ export default function DoctorDashboard() {
                     {
                       icon: Calendar,
                       label: "Total Today",
-                      value: ALL_APPOINTMENTS_TODAY.length,
+                      value: doctorAppointments.length,
                       color: "text-primary",
                       bg: "bg-primary/10",
                     },
@@ -396,7 +406,7 @@ export default function DoctorDashboard() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {ALL_APPOINTMENTS_TODAY.map((apt) => {
+                        {doctorAppointments.map((apt) => {
                           const isDone = completedIds.has(apt.id);
                           return (
                             <div
@@ -419,14 +429,12 @@ export default function DoctorDashboard() {
                                     )}
                                   </div>
                                   <p className="text-xs text-muted-foreground mt-0.5">
-                                    {apt.dept}
+                                    {apt.department}
                                   </p>
                                   <p className="text-sm text-primary font-medium mt-1 flex items-center gap-1">
                                     <Clock className="h-3 w-3" />
-                                    {formatTime(apt.time)} ·{" "}
-                                    {formatDate(
-                                      new Date().toISOString().split("T")[0],
-                                    )}
+                                    {formatTime(apt.timeSlot)} ·{" "}
+                                    {formatDate(apt.date)}
                                   </p>
                                   {apt.reason && (
                                     <p className="text-xs text-muted-foreground mt-1">
@@ -461,7 +469,7 @@ export default function DoctorDashboard() {
                             </div>
                           );
                         })}
-                        {ALL_APPOINTMENTS_TODAY.length === 0 && (
+                        {doctorAppointments.length === 0 && (
                           <p
                             className="text-center py-10 text-muted-foreground"
                             data-ocid="no-doctor-appointments"
