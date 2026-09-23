@@ -6,22 +6,32 @@
 
 ## Verified Commands
 
-**Frontend** (run from `src/frontend/`):
+The repository contains `client/` and `server/` directories.
 
-- **install**: `pnpm install --prefer-offline`
-- **typecheck**: `pnpm typecheck`
-- **lint fix**: `pnpm fix`
-- **build**: `pnpm build`
+**Frontend** (run from `client/`):
 
-**Backend** (run from `src/backend/`):
+- **install**: `npm install`
+- **typecheck**: `npm run typecheck`
+- **lint/check**: `npm run check`
+- **build**: `npm run build`
 
-- **install**: `mops install`
-- **typecheck**: `mops check --fix`
-- **build**: `mops build`
+**Backend** (run from `server/`):
 
-**Backend and frontend integration** (run from root):
+- **install**: `npm install`
+- **development**: `npm run dev`
+- **production-style start**: `npm start`
 
-- **generate bindings**: `pnpm bindgen` This step is necessary to ensure the frontend can call the backend methods.
+**Root shortcuts**:
+
+- **build frontend**: `npm run build`
+- **typecheck frontend**: `npm run typecheck`
+- **check frontend**: `npm run check`
+- **development frontend**: `npm run client`
+- **development backend**: `npm run server`
+
+The backend requires MongoDB and `server/.env` values based on
+`server/.env.example`. The frontend development server proxies `/api`
+requests to `http://127.0.0.1:5000`.
 
 ## Learnings
 

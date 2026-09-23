@@ -31,3 +31,18 @@ Thumbs.db
 *.pid
 *.seed
 *.pid.lock
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+!terraform.tfvars.example
+
+# Docker and local evidence output
+docker/**/.pytest_cache/
+docker/**/__pycache__/
+evidence/**/raw/
