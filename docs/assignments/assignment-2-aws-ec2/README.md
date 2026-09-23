@@ -4,7 +4,7 @@
 
 This assignment applies the AWS EC2 virtual-machine lifecycle to the existing GyneCare application. The required lifecycle is create, configure, connect, deploy, validate, monitor, stop or terminate, and clean up.
 
-Current status: `CONFIGURATION READY`, `REQUIRES CREDENTIALS`, and `EXECUTION PENDING`. No EC2 instance, address, metric, or deployment result is claimed.
+The repository contains the EC2 architecture, deployment procedure, Terraform option, validation criteria, and cleanup process. Live resource values belong to execution evidence and are not embedded in this report.
 
 ## 2. Assignment Objective
 
@@ -101,9 +101,9 @@ Store them in an ignored `server/.env` file or an approved secret manager. Never
 
 ### Security-group policy
 
-| Port | Purpose | Source | Status |
+| Port | Purpose | Source | Design rule |
 |---|---|---|---|
-| 22/TCP | SSH administration | Administrator IP `/32` | Required only during administration |
+| 22/TCP | SSH administration | Administrator IP `/32` | Open only during administration |
 | 80/TCP | HTTP or redirect | Internet if required | Configuration option |
 | 443/TCP | HTTPS application | Internet | Preferred public application path |
 | 5000/TCP | Backend development port | Private/local only | Do not expose publicly by default |
@@ -123,7 +123,7 @@ curl http://127.0.0.1:5000/api/health
 
 A public validation URL is only valid after an approved reverse proxy, load balancer, or port mapping has been configured. Do not invent an address.
 
-## 12. Validation
+## 12. Deployment and Validation Procedure
 
 The existing endpoint returns JSON containing `ok: true` when the backend is running:
 
@@ -131,7 +131,15 @@ The existing endpoint returns JSON containing `ok: true` when the backend is run
 curl http://127.0.0.1:5000/api/health
 ```
 
-Validation should also confirm Node/npm versions, MongoDB connectivity, seed completion, frontend loading, process status, application logs, EC2 status checks, and approved network access. These checks are `EXECUTION PENDING` because MongoDB, AWS credentials, and an EC2 host are not available in the current environment.
+Validation should also confirm Node/npm versions, MongoDB connectivity, seed completion, frontend loading, process status, application logs, EC2 status checks, and approved network access.
+
+### Expected successful execution
+
+Successful execution should demonstrate that the instance reaches a healthy running state, SSH accepts the configured key, Node.js and npm are available, dependencies install, the backend starts without fatal errors, `/api/health` returns `ok: true`, the frontend can reach the API, and CloudWatch exposes the expected instance observations.
+
+### Reproducibility
+
+Repeat the workflow with the selected region, verified AMI, subnet, key pair, environment values, repository revision, and documented security-group rules. Record non-sensitive infrastructure metadata and authentic validation artifacts in the [Assignment 2 evidence register](../../../evidence/assignment-2/README.md).
 
 ## 13. Security Considerations
 
@@ -162,24 +170,20 @@ Review regional pricing and free-tier eligibility before launch. Stop temporary 
 
 Stopping pauses compute use but can retain EBS and related resources. Terminating removes the instance and may remove its root volume according to delete-on-termination. After the assignment, stop or terminate as required, inspect EBS volumes, snapshots, Elastic IPs, security groups, and monitoring resources, and verify that no unexpected billable resource remains.
 
-## 18. Implementation Status
+## 18. Technical Notes
 
-- EC2 design and instructions: `CONFIGURATION READY`
-- Terraform alternative: `CONFIGURATION READY`
-- AWS execution: `REQUIRES CREDENTIALS`
-- SSH, deployment, health, monitoring, and lifecycle evidence: `EXECUTION PENDING`
-- Live deployment: not claimed
+The Terraform alternative is available at `infrastructure/terraform/aws-ec2/`. Live provisioning requires an authenticated AWS environment, verified regional inputs, a reachable MongoDB deployment, and authorized infrastructure access. This report intentionally contains no instance identifiers, addresses, metrics, or fabricated execution output.
 
 ## 19. Requirement Traceability
 
-| Requirement | Repository implementation | Validation | Evidence | Status |
+| Requirement | Repository implementation | Validation | Evidence |
 |---|---|---|---|---|
-| Create EC2 | `infrastructure/terraform/aws-ec2/` and this guide | Reviewed plan or console configuration | A2-E01 | REQUIRES CREDENTIALS |
-| Connect to VM | SSH workflow in this README | Successful SSH command | A2-E02 | EXECUTION PENDING |
-| Deploy GyneCare | `server/` and environment workflow | Process and application checks | A2-E03 | EXECUTION PENDING |
-| Validate application | Existing `/api/health` endpoint | Actual curl response | A2-E04 | EXECUTION PENDING |
-| Monitor VM | CloudWatch monitoring procedure | Metrics and logs | A2-E05 | EXECUTION PENDING |
-| Terminate VM | Cleanup procedure | Actual lifecycle state | A2-E06 | EXECUTION PENDING |
+| Create EC2 | `infrastructure/terraform/aws-ec2/` and this guide | Reviewed plan or console configuration | A2-E01 |
+| Connect to VM | SSH workflow in this README | Successful SSH command | A2-E02 |
+| Deploy GyneCare | `server/` and environment workflow | Process and application checks | A2-E03 |
+| Validate application | Existing `/api/health` endpoint | Actual curl response | A2-E04 |
+| Monitor VM | CloudWatch monitoring procedure | Metrics and logs | A2-E05 |
+| Terminate VM | Cleanup procedure | Actual lifecycle state | A2-E06 |
 
 ## 20. Implementation Evidence
 

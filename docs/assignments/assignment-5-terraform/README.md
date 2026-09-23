@@ -4,7 +4,7 @@
 
 This assignment demonstrates Infrastructure as Code by defining an AWS EC2 instance and its security group with Terraform. It builds conceptually on Assignment 2 while avoiding credentials, state files, and automatic provisioning.
 
-Current status: configuration is `CONFIGURATION READY`; Terraform validation is `REQUIRES TOOLING`; AWS execution is `REQUIRES CREDENTIALS`; no apply, output, or resource is claimed.
+The repository contains a complete, bounded EC2 configuration, provider constraints, typed inputs, outputs, state protections, execution workflow, and cleanup procedure. Live provisioning requires an authenticated AWS environment and verified regional inputs.
 
 ## 2. Assignment Objective
 
@@ -126,11 +126,19 @@ terraform destroy -var-file=terraform.tfvars
 - `output` displays declared outputs after state exists.
 - `destroy` removes resources managed by this configuration and must never target unrelated infrastructure.
 
-No Terraform command has completed in this environment because Terraform is unavailable.
+The command sequence above is the complete execution workflow. Each command should be reviewed before advancing to the next stage; no terminal output is embedded in this report.
 
-## 12. Validation
+## 12. Deployment and Validation Procedure
 
-Before `apply`, verify Terraform installation, AWS identity, region, AMI, key pair, subnet/VPC relationship, expected plan, cost, and cleanup ownership. The intended validation sequence is `fmt`, `fmt -check`, `init`, `validate`, and reviewed `plan`. No result is represented as completed.
+Before `apply`, verify Terraform installation, AWS identity, region, AMI, key pair, subnet/VPC relationship, expected plan, cost, and cleanup ownership. The intended validation sequence is `fmt`, `fmt -check`, `init`, `validate`, and reviewed `plan`.
+
+### Expected successful execution
+
+Successful execution should show the AWS provider initializing, formatting checks passing, validation accepting the configuration, a plan containing the intended EC2 and security-group resources, outputs for the instance attributes after apply, and a destroy plan limited to resources managed by this state.
+
+### Reproducibility
+
+Use the pinned provider constraints, a copied local `terraform.tfvars` with verified values, standard AWS credential resolution, and the command sequence in this README. Review the plan before apply and preserve the state needed for controlled cleanup.
 
 ## 13. Security Considerations
 
@@ -152,24 +160,20 @@ EC2 runtime, EBS storage, public addressing, data transfer, and CloudWatch usage
 
 Use `terraform destroy -var-file=terraform.tfvars` only when the state belongs to this configuration and the resources are disposable. Review the plan, confirm ownership, then inspect the account for retained EBS, addresses, snapshots, logs, and security groups. No destroy operation was run.
 
-## 18. Implementation Status
+## 18. Technical Notes
 
-- Terraform files and state protections: `CONFIGURATION READY`
-- Terraform CLI validation: `REQUIRES TOOLING`
-- AWS provider access: `REQUIRES CREDENTIALS`
-- Plan, apply, outputs, and destroy: `EXECUTION PENDING`
-- EC2 resource: configuration only, not provisioned
+Terraform CLI, AWS CLI, AWS credentials, verified regional inputs, and a live account are external execution requirements. The configuration is intentionally not applied automatically. State and provider caches remain local and ignored by Git.
 
 ## 19. Requirement Traceability
 
-| Requirement | Repository implementation | Validation | Evidence | Status |
+| Requirement | Repository implementation | Validation | Evidence |
 |---|---|---|---|---|
-| Provider | `versions.tf`, `provider.tf` | `terraform init` and `validate` | A5-E01, A5-E03 | REQUIRES TOOLING |
-| Variables | `variables.tf`, example tfvars | `fmt` and reviewed inputs | A5-E02 | CONFIGURATION READY |
-| EC2 and security group | `main.tf` | Reviewed `plan` | A5-E04 | REQUIRES CREDENTIALS |
-| Outputs | `outputs.tf` | `terraform output` after apply | A5-E05 | EXECUTION PENDING |
-| State protection | `.gitignore` and workflow | Ignore/state review | A5-E01 | CONFIGURATION READY |
-| Destroy lifecycle | Workflow in this README | Actual destroy result | A5-E06 | EXECUTION PENDING |
+| Provider | `versions.tf`, `provider.tf` | `terraform init` and `validate` | A5-E01, A5-E03 |
+| Variables | `variables.tf`, example tfvars | `fmt` and reviewed inputs | A5-E02 |
+| EC2 and security group | `main.tf` | Reviewed `plan` | A5-E04 |
+| Outputs | `outputs.tf` | `terraform output` after apply | A5-E05 |
+| State protection | `.gitignore` and workflow | Ignore/state review | A5-E01 |
+| Destroy lifecycle | Workflow in this README | Destroy result | A5-E06 |
 
 ## 20. Implementation Evidence
 

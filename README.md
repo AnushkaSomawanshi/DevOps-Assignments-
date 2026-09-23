@@ -108,4 +108,4 @@ AWS credentials, SSH keys, `.env` files, Docker secrets, and Terraform state mus
 - [Git history](docs/git-history.md)
 - [Evidence index](evidence/README.md)
 
-Each assignment README maps requirement -> repository file -> implementation -> validation -> evidence -> status. No live cloud result, screenshot, metric, endpoint, or commit hash is recorded until it exists.
+Each assignment README maps requirement -> repository file -> implementation -> validation -> supporting evidence. No live cloud result, metric, endpoint, or commit hash is recorded until it exists.

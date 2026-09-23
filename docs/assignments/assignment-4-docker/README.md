@@ -4,7 +4,7 @@
 
 This assignment explores Docker architecture and commands, creates a Dockerfile, and containerizes a simple Python application. The required implementation is isolated from GyneCare so the existing MERN application remains intact.
 
-Current status: Python application and container files are `CONFIGURATION READY`; Python syntax validation is complete, while Docker build and lifecycle execution are `REQUIRES TOOLING` because the Docker daemon was unavailable during validation.
+The repository contains the Python application, image definition, dependency manifest, build-context exclusions, health check, and complete Docker execution procedure. Docker Engine is an external prerequisite for runtime validation.
 
 ## 2. Assignment Objective
 
@@ -95,7 +95,7 @@ Run from `docker/python-app/`:
 
 Do not remove unrelated containers, images, networks, or volumes.
 
-## 12. Validation
+## 12. Deployment and Validation Procedure
 
 ```mermaid
 flowchart LR
@@ -125,7 +125,15 @@ docker rm -f gynecare-python-demo
 docker rmi gynecare-python-demo:local
 ```
 
-The first build attempt in this environment failed because the Docker Desktop Linux engine was unavailable. No image, response, logs, or lifecycle result is claimed.
+The Docker Desktop Linux engine must be running before these commands can execute. This report records procedures and expected results, not terminal output. A successful run should produce a tagged local image, a reachable container on port `8080`, JSON responses from `/` and `/health`, visible application logs, a healthy inspection result, and a clean stop/restart/remove sequence.
+
+### Expected successful execution
+
+The complete execution flow is build, run, inspect, send HTTP requests, review logs and health, stop, restart, and remove. Each stage should be checked before advancing to the next stage.
+
+### Reproducibility
+
+Use the repository checkout, Docker Engine, the `docker/python-app/` working directory, and the exact image tag shown above. Repeat the build, run, HTTP validation, inspection, log review, and cleanup sequence without changing the application source.
 
 ## 13. Security Considerations
 
@@ -147,23 +155,19 @@ Local Docker has no cloud runtime charge, but registry storage and hosted contai
 
 Stop the demo container, remove it, then remove the demo image. Inspect networks and volumes before any removal and do not affect unrelated resources. No cleanup result is claimed until the daemon is available.
 
-## 18. Implementation Status
+## 18. Technical Notes
 
-- Python source, dependencies, Dockerfile, and `.dockerignore`: `CONFIGURATION READY`
-- Python syntax validation: `COMPLETED`
-- Docker CLI present: `REQUIRES TOOLING` for Engine-backed commands
-- Image build, container execution, endpoints, logs, and lifecycle: `EXECUTION PENDING`
-- MERN containerization: `NOT IMPLEMENTED`
+The Python source, dependencies, Dockerfile, and `.dockerignore` are implemented in `docker/python-app/`. Python syntax can be checked independently; image build, endpoint, log, and lifecycle checks require Docker Engine. The MERN application remains uncontainerized by this assignment so its existing architecture is not changed without a validated need.
 
 ## 19. Requirement Traceability
 
-| Requirement | Repository implementation | Validation | Evidence | Status |
+| Requirement | Repository implementation | Validation | Evidence |
 |---|---|---|---|---|
-| Python application | `docker/python-app/app.py` | Python syntax; endpoint calls require Docker runtime | A4-E04 | CONFIGURATION READY |
-| Dockerfile | `docker/python-app/Dockerfile` | Image build and inspect | A4-E02 | REQUIRES TOOLING |
-| Docker commands | This README command table | Actual CLI output | A4-E01, A4-E05 | REQUIRES TOOLING |
-| Container lifecycle | Run/stop/start/restart/remove workflow | Actual lifecycle output | A4-E06 | EXECUTION PENDING |
-| Health validation | `/health` endpoint and `HEALTHCHECK` | HTTP response and inspect result | A4-E04 | EXECUTION PENDING |
+| Python application | `docker/python-app/app.py` | Python syntax and HTTP endpoint calls | A4-E04 |
+| Dockerfile | `docker/python-app/Dockerfile` | Image build and inspect | A4-E02 |
+| Docker commands | This README command table | CLI output and logs | A4-E01, A4-E05 |
+| Container lifecycle | Run/stop/start/restart/remove workflow | Lifecycle output | A4-E06 |
+| Health validation | `/health` endpoint and `HEALTHCHECK` | HTTP response and inspect result | A4-E04 |
 
 ## 20. Implementation Evidence
 

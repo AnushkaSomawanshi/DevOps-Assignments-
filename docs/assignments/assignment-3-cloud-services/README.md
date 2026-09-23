@@ -4,7 +4,7 @@
 
 This assignment compares major AWS and Azure service categories and relates them to GyneCare. It intentionally does not require an expensive production deployment of every service.
 
-Current status: `DOCUMENTED`. EC2 and ECS relationships are `CONFIGURATION READY`; Azure deployment, S3, Lambda, RDS, ELB, and ECS execution are not claimed.
+The report distinguishes service design, GyneCare relevance, configuration approach, validation criteria, security, and cost without embedding provider-specific execution output.
 
 ## 2. Assignment Objective
 
@@ -57,18 +57,18 @@ This is a learning architecture, not a claim that all components are deployed. A
 
 ### AWS services
 
-| Service | Purpose and operation | GyneCare use case | Configuration and validation | Security/cost | Status |
+| Service | Purpose and operation | GyneCare use case | Configuration and validation | Security/cost |
 |---|---|---|---|---|---|
-| EC2 | Virtual Linux compute | Host Node and frontend delivery | Assignment 2 workflow; validate SSH and `/api/health` | Restricted SSH, EBS cost, terminate when finished | CONFIGURATION READY |
-| S3 | Durable object storage | Private assets, exports, backups, or deployment artifacts | Bucket region, encryption, Block Public Access, versioning, lifecycle; validate controlled access | Least privilege; storage/request/transfer cost | DOCUMENTED |
-| Lambda | Event-driven function | Process a private S3 upload or background task | Runtime, handler, trigger, execution role, CloudWatch logs; invoke a test event | Narrow IAM role; request/duration cost | NOT IMPLEMENTED |
-| RDS | Managed relational database | Additional relational learning exercise only | Engine, private subnet, encryption, backups, security group; validate connectivity | Never substitute for MongoDB; instance/storage cost | DOCUMENTED |
-| Elastic Load Balancing | Routes traffic to healthy targets | ALB in front of one or more application hosts | Listener, target group, `/api/health` check, routing; inspect target health | Public listener and hourly/data cost; one target is not HA | DOCUMENTED |
-| ECS | Runs containers as tasks/services | Future home for Assignment 4 image | ECR image, task definition, IAM, networking, logs, service; validate task health | Fargate/EC2 capacity and logs cost | CONFIGURATION READY |
+| EC2 | Virtual Linux compute | Host Node and frontend delivery | Assignment 2 workflow; validate SSH and `/api/health` | Restricted SSH, EBS cost, terminate when finished |
+| S3 | Durable object storage | Private assets, exports, backups, or deployment artifacts | Bucket region, encryption, Block Public Access, versioning, lifecycle; validate controlled access | Least privilege; storage/request/transfer cost |
+| Lambda | Event-driven function | Process a private S3 upload or background task | Runtime, handler, trigger, execution role, CloudWatch logs; invoke a test event | Narrow IAM role; request/duration cost |
+| RDS | Managed relational database | Additional relational learning exercise only | Engine, private subnet, encryption, backups, security group; validate connectivity | Never substitute for MongoDB; instance/storage cost |
+| Elastic Load Balancing | Routes traffic to healthy targets | ALB in front of one or more application hosts | Listener, target group, `/api/health` check, routing; inspect target health | Public listener and hourly/data cost; one target is not HA |
+| ECS | Runs containers as tasks/services | Future home for Assignment 4 image | ECR image, task definition, IAM, networking, logs, service; validate task health | Fargate/EC2 capacity and logs cost |
 
 ### Azure equivalents
 
-| AWS category | Azure service | GyneCare relevance | Configuration and validation | Status |
+| AWS category | Azure service | GyneCare relevance | Configuration and validation |
 |---|---|---|---|---|
 | VM compute | Azure Virtual Machines | VM-hosted application | Image, size, VNet/subnet, NSG, SSH, health check | DOCUMENTED |
 | Object storage | Azure Blob Storage | Private objects and exports | Storage account, private access, encryption, lifecycle; validate authorized access | DOCUMENTED |
@@ -117,28 +117,21 @@ S3 has storage, request, and transfer costs; Lambda has request and duration cos
 
 For any future bounded example, record ownership, stop or delete the service, remove triggers and security rules, empty test storage before deletion, delete databases deliberately, remove ECS services/tasks and log groups, and verify no billable resources remain. No cloud resource is claimed by this repository.
 
-## 18. Implementation Status
+## 18. Technical Notes
 
-- AWS service mapping: `DOCUMENTED`
-- EC2: `CONFIGURATION READY`, execution `REQUIRES CREDENTIALS`
-- S3: `DOCUMENTED`, not deployed
-- Lambda: `NOT IMPLEMENTED`
-- RDS: `DOCUMENTED`, not deployed and not a MongoDB replacement
-- ELB: `DOCUMENTED`, not deployed
-- ECS: `CONFIGURATION READY`, not deployed
-- Azure services: `DOCUMENTED`, deployment `NOT IMPLEMENTED`
+EC2 and ECS are connected to the implementation path in Assignments 2, 4, and 5. S3, Lambda, RDS, ELB, and Azure services are described as bounded integration options; no production deployment of those services is represented in this report. RDS and Azure Database remain relational comparisons and do not replace GyneCare's MongoDB architecture.
 
 ## 19. Requirement Traceability
 
-| Requirement | Repository implementation | Validation | Evidence | Status |
+| Requirement | Repository implementation | Validation | Evidence |
 |---|---|---|---|---|
-| AWS EC2 | Terraform and Assignment 2 workflow | SSH, health, lifecycle | A3-E01 / A2 register | CONFIGURATION READY |
-| AWS S3 | Service design in this README | Authorized bucket test if implemented | A3-E02 | NOT IMPLEMENTED |
-| AWS Lambda | Bounded design described here | Invocation and logs if implemented | A3-E03 | NOT IMPLEMENTED |
-| AWS RDS | Relational comparison and security guidance | Connectivity if implemented | A3-E04 | DOCUMENTED |
-| AWS ELB | ALB design and health-check explanation | Target health if implemented | A3-E05 | DOCUMENTED |
-| AWS ECS | Docker-to-ECS configuration path | Task/service health if implemented | A3-E06 | CONFIGURATION READY |
-| Azure equivalents | Comparison tables in this README | Provider evidence if executed | A3-E07 | DOCUMENTED |
+| AWS EC2 | Terraform and Assignment 2 workflow | SSH, health, lifecycle | A3-E01 / A2 register |
+| AWS S3 | Service design in this README | Authorized bucket test | A3-E02 |
+| AWS Lambda | Bounded design described here | Invocation and logs | A3-E03 |
+| AWS RDS | Relational comparison and security guidance | Connectivity test | A3-E04 |
+| AWS ELB | ALB design and health-check explanation | Target health | A3-E05 |
+| AWS ECS | Docker-to-ECS configuration path | Task/service health | A3-E06 |
+| Azure equivalents | Comparison tables in this README | Provider validation | A3-E07 |
 
 ## 20. Implementation Evidence
 

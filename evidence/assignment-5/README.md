@@ -9,4 +9,4 @@
 | A5-E05 | EC2 provisioning | Deployment Evidence | Actual EC2 resource created by Terraform | EXECUTION PENDING |
 | A5-E06 | Cleanup | Lifecycle Evidence | Actual Terraform destroy result | EXECUTION PENDING |
 
-No screenshots or outputs have been fabricated. Store real captured artifacts here only after execution, using the naming scheme in the implementation prompt.
+Store authentic Terraform command output, reviewed plans, infrastructure records, and cleanup results here after execution. Do not store expected output or infrastructure identifiers without a corresponding execution record.

@@ -10,4 +10,4 @@
 | A3-E06 | ECS | Configuration Evidence | Docker image to task/service design | CONFIGURATION READY |
 | A3-E07 | Azure comparison | Documentation Evidence | AWS/Azure category comparison | DOCUMENTED |
 
-No AWS or Azure deployment evidence has been fabricated.
+Add only authentic provider configuration, service validation, monitoring, and cleanup artifacts. Conceptual comparison material belongs in the Assignment 3 README.
