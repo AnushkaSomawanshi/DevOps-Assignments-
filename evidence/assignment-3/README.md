@@ -1,13 +1,13 @@
-# Assignment 3 Implementation Evidence Register
+# Assignment 3 — Implementation Evidence Guide
 
-| Evidence ID | Requirement | Evidence Type | Required Demonstration | Status |
-|---|---|---|---|---|
-| A3-E01 | AWS service mapping | Configuration Evidence | Service table and GyneCare use cases | DOCUMENTED |
-| A3-E02 | S3 | Infrastructure Evidence | Secure bucket configuration if created | NOT IMPLEMENTED |
-| A3-E03 | Lambda | Execution Evidence | Function, trigger, invocation, and logs | NOT IMPLEMENTED |
-| A3-E04 | RDS | Configuration Evidence | Relational-service design without MongoDB replacement | DOCUMENTED |
-| A3-E05 | ELB | Configuration Evidence | Listener, target group, and health-check design | DOCUMENTED |
-| A3-E06 | ECS | Configuration Evidence | Docker image to task/service design | CONFIGURATION READY |
-| A3-E07 | Azure comparison | Documentation Evidence | AWS/Azure category comparison | DOCUMENTED |
+This directory holds the verification artifacts and execution proof for **Assignment 3: Terraform Infrastructure as Code**.
 
-Add only authentic provider configuration, service validation, monitoring, and cleanup artifacts. Conceptual comparison material belongs in the Assignment 3 README.
+## Required Evidence Checklist
+
+1. **Terraform CLI & Provider Initialization**: Terminal capture of `terraform init` showing successful AWS provider plugin installation.
+2. **Formatting & Syntax Validation**: Terminal output of `terraform fmt -check` and `terraform validate` confirming clean configuration syntax.
+3. **Execution Plan**: Terminal output of `terraform plan` showing declarative planned resources (`aws_instance.gynecare`, `aws_security_group.gynecare`).
+4. **Infrastructure State & Outputs**: Terminal output of `terraform output` demonstrating computed non-sensitive metadata (`instance_id`, `security_group_id`).
+5. **Security & State Protection**: Confirmation of `.gitignore` excluding `*.tfstate`, `*.tfvars`, and `.terraform/`.
+
+For the detailed technical report, see [Assignment 3 Documentation](../../docs/assignment-3/assignment-3-documentation.md).

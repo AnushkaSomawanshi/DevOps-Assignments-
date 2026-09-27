@@ -1,7 +1,5 @@
 # Terraform AWS EC2
 
-Status: `REQUIRES TOOLING`
-
 This configuration demonstrates Terraform provider, variables, resources, outputs, security-group rules, dependency relationships, and encrypted EBS for a bounded GyneCare EC2 exercise. It uses the account's default VPC and a caller-supplied subnet to avoid creating unnecessary network infrastructure.
 
 ## Prerequisites

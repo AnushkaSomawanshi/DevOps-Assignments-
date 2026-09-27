@@ -1,12 +1,14 @@
-# Assignment 2 Implementation Evidence Register
+# Assignment 2 — Implementation Evidence Guide
 
-| Evidence ID | Requirement | Evidence Type | Required Demonstration | Status |
-|---|---|---|---|---|
-| A2-E01 | EC2 configuration | Infrastructure Evidence | Region, AMI, type, VPC, subnet, SG, key, EBS | EXECUTION PENDING |
-| A2-E02 | Server connection | Execution Evidence | Successful SSH connection | REQUIRES CREDENTIALS |
-| A2-E03 | GyneCare deployment | Deployment Evidence | Application process and deployment state | EXECUTION PENDING |
-| A2-E04 | Health validation | Validation Evidence | Actual `/api/health` response | EXECUTION PENDING |
-| A2-E05 | Monitoring | Monitoring Evidence | EC2 status and CloudWatch observation | EXECUTION PENDING |
-| A2-E06 | Cleanup | Lifecycle Evidence | Stop/termination and resource review | EXECUTION PENDING |
+This directory holds the verification artifacts and execution proof for **Assignment 2: Cloud Computing & AWS EC2 Deployment**.
 
-Add only authentic AWS configuration, connection, deployment, validation, monitoring, and lifecycle artifacts. Do not add resource identifiers or operational measurements unless they were collected during execution.
+## Required Evidence Checklist
+
+1. **EC2 Instance Provisioning**: AWS Management Console or AWS CLI output displaying instance ID, region, AMI, VPC, subnet, and security group.
+2. **Secure SSH Connection**: Terminal capture showing successful SSH session initialization into the Linux EC2 host using private key authentication.
+3. **Application Setup**: Terminal commands demonstrating Git clone, Node.js installation, and dependency configuration.
+4. **Health Verification**: Terminal curl output verifying `GET /api/health` responsiveness.
+5. **CloudWatch Monitoring**: AWS CloudWatch console capture displaying instance metrics (`CPUUtilization`, `StatusCheckFailed`).
+6. **Instance Decommissioning**: Record of stopping or terminating the instance to prevent cloud billing drift.
+
+For the detailed technical report, see [Assignment 2 Documentation](../../docs/assignment-2/assignment-2-documentation.md).

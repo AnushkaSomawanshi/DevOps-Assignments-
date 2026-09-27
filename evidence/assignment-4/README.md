@@ -1,12 +1,15 @@
-# Assignment 4 Implementation Evidence Register
+# Assignment 4 — Implementation Evidence Guide
 
-| Evidence ID | Requirement | Evidence Type | Required Demonstration | Status |
-|---|---|---|---|---|
-| A4-E01 | Docker CLI | Command-Line Evidence | `docker --version` and available engine | REQUIRES TOOLING |
-| A4-E02 | Image build | Implementation Evidence | Successful Python image build | REQUIRES TOOLING |
-| A4-E03 | Running container | Execution Evidence | Container listed by `docker ps` | EXECUTION PENDING |
-| A4-E04 | Application response | Validation Evidence | Responses from `/` and `/health` | EXECUTION PENDING |
-| A4-E05 | Container logs | Command-Line Evidence | Application logs inspected | EXECUTION PENDING |
-| A4-E06 | Lifecycle | Lifecycle Evidence | Stop, start, restart, and removal | EXECUTION PENDING |
+This directory holds the verification artifacts and execution proof for **Assignment 4: Dockerize GyneCare Application**.
 
-The Docker Engine must be available before image, endpoint, log, and lifecycle artifacts can be collected. The register does not substitute expected results for command evidence.
+## Required Evidence Checklist
+
+1. **Docker Engine Verification**: Output of `docker --version` and `docker info` demonstrating Docker Desktop / Engine availability.
+2. **Docker Build Process**: Terminal capture of `docker build -t gynecare-app:v1 .` demonstrating successful multi-layer compilation.
+3. **Docker Image Listing**: Output of `docker images gynecare-app:v1` showing image ID, disk usage, and size.
+4. **Active Container Execution**: Output of `docker ps` showing `gynecare-container` running with port mapping `5000:5000`.
+5. **Application Responsiveness**: HTTP response from `http://localhost:5000/` and `http://localhost:5000/api/health`.
+6. **Container Logs**: Output of `docker logs gynecare-container` showing application initialization.
+7. **Container Lifecycle**: Terminal output demonstrating `docker exec`, `docker stop`, `docker start`, and `docker rm`.
+
+For the detailed technical report, see [Assignment 4 Documentation](../../docs/assignment-4/assignment-4-documentation.md).

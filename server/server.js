@@ -23,8 +23,29 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/hospitalDB
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (_req, res) => {
+  res.json({
+    message: "GyneCare Hospital Management System API is running inside Docker.",
+    status: "healthy",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/health",
+      doctors: "/api/doctors",
+      hospitals: "/api/hospitals",
+      packages: "/api/packages",
+      blogs: "/api/blogs"
+    }
+  });
+});
+
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    status: "healthy",
+    service: "GyneCare Hospital Management API",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.use("/api/auth", authRoutes);
@@ -43,11 +64,22 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: "Internal server error" });
 });
 
+async function initDatabase(uri) {
+  try {
+    await connectDatabase(uri);
+    await seedDatabase();
+    console.log("Connected to MongoDB and seeded initial records successfully.");
+  } catch (error) {
+    console.warn(`[Database Notice] MongoDB at ${uri} is not yet available: ${error.message}`);
+    console.log("Retrying database connection in 5 seconds...");
+    setTimeout(() => initDatabase(uri), 5000);
+  }
+}
+
 async function start() {
-  await connectDatabase(MONGO_URI);
-  await seedDatabase();
-  app.listen(PORT, () => {
-    console.log(`Server running on http://127.0.0.1:${PORT}`);
+  initDatabase(MONGO_URI);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`GyneCare API server listening on http://0.0.0.0:${PORT}`);
   });
 }
 

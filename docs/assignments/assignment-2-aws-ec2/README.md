@@ -1,5 +1,8 @@
 # Assignment 2 - AWS EC2
 
+> [!NOTE]
+> The primary, comprehensive documentation for this assignment has been standardized in [docs/assignment-2/](../../assignment-2/). See [Assignment 2 Documentation](../../assignment-2/assignment-2-documentation.md).
+
 ## 1. Assignment Overview
 
 This assignment applies the AWS EC2 virtual-machine lifecycle to the existing GyneCare application. The required lifecycle is create, configure, connect, deploy, validate, monitor, stop or terminate, and clean up.

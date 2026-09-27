@@ -1,0 +1,89 @@
+# ==============================================================================
+# GyneCare Hospital Management System - Docker Compose Configuration (Assignment 5)
+# Multi-container orchestration: Frontend (React/Nginx) + Backend (Node/Express) + Database (MongoDB)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Database Service: MongoDB NoSQL Database
+  # ----------------------------------------------------------------------------
+  mongodb:
+    image: mongo:7.0
+    container_name: gynecare-mongodb
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-hospitalDB}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - gynecare-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------------------------
+  # Backend API Service: GyneCare Express/Mongoose Application
+  # ----------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gynecare-backend:latest
+    container_name: gynecare-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongodb:27017/${MONGO_DATABASE:-hospitalDB}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - gynecare-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # ----------------------------------------------------------------------------
+  # Frontend Web Service: React 19 / Vite SPA served via Nginx
+  # ----------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: gynecare-frontend:latest
+    container_name: gynecare-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - gynecare-network
+
+# ------------------------------------------------------------------------------
+# Persistent Volumes: Retain Database records across container lifecycles
+# ------------------------------------------------------------------------------
+volumes:
+  mongodb_data:
+    name: gynecare_mongodb_data
+
+# ------------------------------------------------------------------------------
+# Networks: Isolated bridge network for internal inter-service communication
+# ------------------------------------------------------------------------------
+networks:
+  gynecare-network:
+    name: gynecare-network
+    driver: bridge

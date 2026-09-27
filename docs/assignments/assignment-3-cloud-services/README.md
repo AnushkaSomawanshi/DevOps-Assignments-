@@ -1,5 +1,8 @@
 # Assignment 3 - AWS and Azure Cloud Services
 
+> [!NOTE]
+> For the core curriculum assignments, **Assignment 3 (Terraform Infrastructure as Code)** is located at [docs/assignment-3/](../../assignment-3/). See [Assignment 3 Documentation](../../assignment-3/assignment-3-documentation.md). This document serves as supplementary reference on cloud provider service equivalence.
+
 ## 1. Assignment Overview
 
 This assignment compares major AWS and Azure service categories and relates them to GyneCare. It intentionally does not require an expensive production deployment of every service.

@@ -1,12 +1,18 @@
-# Assignment 5 Implementation Evidence Register
+# Assignment 5 — Implementation Evidence Guide
 
-| Evidence ID | Requirement | Evidence Type | Required Demonstration | Status |
-|---|---|---|---|---|
-| A5-E01 | Terraform initialization | Command-Line Evidence | Successful `terraform init` | REQUIRES TOOLING |
-| A5-E02 | Terraform formatting | Validation Evidence | `terraform fmt -check` result | REQUIRES TOOLING |
-| A5-E03 | Terraform validation | Validation Evidence | Successful `terraform validate` | REQUIRES TOOLING |
-| A5-E04 | Planned resources | Infrastructure Evidence | Reviewed `terraform plan` | REQUIRES CREDENTIALS |
-| A5-E05 | EC2 provisioning | Deployment Evidence | Actual EC2 resource created by Terraform | EXECUTION PENDING |
-| A5-E06 | Cleanup | Lifecycle Evidence | Actual Terraform destroy result | EXECUTION PENDING |
+This directory holds the verification artifacts and execution proof for **Assignment 5: Multi-Container Application with Docker Compose**.
 
-Store authentic Terraform command output, reviewed plans, infrastructure records, and cleanup results here after execution. Do not store expected output or infrastructure identifiers without a corresponding execution record.
+## Required Evidence Checklist
+
+1. **Compose Configuration Validation**: Output of `docker compose config` confirming valid YAML syntax and resolved environment defaults.
+2. **Multi-Service Build**: Terminal output of `docker compose build` compiling both `gynecare-backend` and `gynecare-frontend`.
+3. **Stack Startup**: Terminal output of `docker compose up -d` creating the network (`gynecare-network`), volume (`gynecare_mongodb_data`), and starting all containers.
+4. **Service Status & Health**: Terminal output of `docker compose ps` displaying `gynecare-frontend`, `gynecare-backend`, and `gynecare-mongodb` with status `Up` and `healthy`.
+5. **Frontend Web UI**: Browser or curl capture of `http://localhost:3000` rendering the GyneCare SPA.
+6. **Backend Health Check**: HTTP response from `http://localhost:5000/api/health`.
+7. **Database Persistence & Seeding**: HTTP response from `http://localhost:5000/api/doctors` demonstrating seeded records stored in and retrieved from MongoDB.
+8. **Nginx Reverse Proxy**: Terminal response from `http://localhost:3000/api/health` routed through Nginx to backend.
+9. **Named Volume & Network Verification**: Output of `docker volume ls --filter "name=gynecare"` and `docker network ls --filter "name=gynecare"`.
+10. **Compose Logs**: Output of `docker compose logs backend` and `docker compose logs mongodb`.
+
+For the detailed technical report, see [Assignment 5 Documentation](../../docs/assignment-5/assignment-5-documentation.md).
