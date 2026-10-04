@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gynecare.fullname" . }}-backend
+  labels:
+    app.kubernetes.io/component: backend
+    {{- include "gynecare.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.backend.service.type }}
+  ports:
+    - port: {{ .Values.backend.service.port }}
+      targetPort: http-api
+      protocol: TCP
+      name: http-api
+  selector:
+    app.kubernetes.io/name: {{ include "gynecare.name" . }}
+    app.kubernetes.io/component: backend

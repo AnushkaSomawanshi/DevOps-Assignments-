@@ -1,0 +1,18 @@
+GyneCare Hospital Management System has been deployed via Helm!
+
+Release Name: {{ .Release.Name }}
+Namespace:    {{ .Release.Namespace }}
+
+1. Get the application URL:
+{{- if eq .Values.frontend.service.type "NodePort" }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "gynecare.fullname" . }}-frontend)
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "Visit GyneCare at: http://$NODE_IP:$NODE_PORT"
+{{- else if eq .Values.frontend.service.type "ClusterIP" }}
+  echo "Visit GyneCare by port-forwarding:"
+  kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "gynecare.fullname" . }}-frontend 8080:80
+  echo "Visit GyneCare at: http://127.0.0.1:8080"
+{{- end }}
+
+2. Monitor Pod Status:
+  kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "gynecare.name" . }}"

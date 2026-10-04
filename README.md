@@ -4,15 +4,61 @@
 **GyneCare Hospital Management System — DevOps Implementation & Infrastructure Engineering**
 
 ## 2. Project Overview
-GyneCare is an enterprise-grade hospital management and patient care platform. This repository represents the end-to-end DevOps engineering workflow for GyneCare, establishing reproducible local setups, cloud infrastructure automation, containerization, and multi-container orchestration across Assignments 1 through 5.
+GyneCare is an enterprise-grade hospital management and patient care platform. This repository documents the complete end-to-end DevOps engineering lifecycle for the GyneCare platform: starting from local full-stack MERN baseline development, progressing through AWS cloud infrastructure provisioning with Terraform, containerization with Docker, multi-container orchestration with Docker Compose, automated Continuous Integration with Jenkins and GitHub, container orchestration and package management with Kubernetes and Helm, core Kubernetes objects and networking models, and automated configuration management using Ansible.
 
-## 3. Application Overview
-The core application delivers specialized healthcare workflows including patient registration, doctor consultation scheduling, preventive healthcare package cataloging, medical record management, and an interactive healthcare assistant. The system is engineered as a three-tier architecture:
-- **Presentation Tier**: Responsive Single Page Application (SPA) built with React 19, TypeScript, Vite, and Tailwind CSS.
+---
+
+## 3. DevOps Progression Story
+
+The repository represents a coherent, industry-aligned DevOps progression across ten comprehensive milestones:
+
+```
+                         GYNECARE DEVOPS LIFECYCLE
+                                     │
+       ┌─────────────────────────────┼─────────────────────────────┐
+       │                             │                             │
+  DEVELOPMENT & CI              INFRASTRUCTURE                OPERATIONS
+       │                             │                             │
+       ▼                             ▼                             ▼
+  Git & GitHub                  Terraform IaC                  Ansible CM
+  (Version Control)             (Declarative AWS Cloud)       (Multi-Host Nginx)
+       │                             │                             │
+       ▼                             ▼                             ▼
+  Jenkins CI Pipeline           AWS EC2 Cloud Host             Configuration
+  (Automated Verification)      (gp3 Storage & Security)       Idempotency
+       │
+       ▼
+  Docker Containerization
+  (Multi-Stage Production Builds)
+       │
+       ▼
+  Docker Compose
+  (Three-Tier Microservice Stack)
+       │
+       ▼
+  Kubernetes Orchestration
+  (Desired State & Self-Healing)
+       │
+       ▼
+  Helm Package Management
+  (Templating, Values & Releases)
+       │
+       ▼
+  Kubernetes Objects & Networking
+  (ClusterIP, NodePort, LoadBalancer, PVC)
+```
+
+---
+
+## 4. Application Overview
+The core GyneCare application delivers specialized healthcare workflows including patient registration, doctor consultation scheduling, preventive healthcare package cataloging, medical record management, and an interactive healthcare assistant. The system is engineered as a decoupled three-tier microservice architecture:
+- **Presentation Tier**: Responsive Single Page Application (SPA) built with React 19, TypeScript, Vite, and Tailwind CSS, served through high-performance Alpine Nginx.
 - **Application Tier**: RESTful API service developed in Node.js and Express.js with modular controllers, health monitoring, and CORS integration.
-- **Data Tier**: Persistent document database powered by MongoDB 7.0 and Mongoose with automated seed data population.
+- **Data Tier**: Persistent document database powered by MongoDB Community Server with automated seed data population and persistent volume binding.
 
-## 4. Technology Stack
+---
+
+## 5. Comprehensive Technology Stack
 
 | Layer / Domain | Technologies |
 |---|---|
@@ -20,52 +66,63 @@ The core application delivers specialized healthcare workflows including patient
 | **Backend** | Node.js (>=18 LTS), Express 4.21.2, CORS, Dotenv, Mongoose 8.9.5 |
 | **Database** | MongoDB 7.0 Community Server |
 | **Containerization** | Docker Engine (v29.7.2), Docker CLI, Multi-stage builds, Alpine Linux |
-| **Orchestration** | Docker Compose (v5.5.0), Custom Bridge Network, Persistent Named Volumes |
+| **Container Composition** | Docker Compose (v5.5.0), Custom Bridge Network, Persistent Named Volumes |
 | **Infrastructure as Code** | HashiCorp Terraform (>= 1.6.0), AWS Provider (~> 5.0) |
 | **Cloud Target** | Amazon Web Services (AWS EC2, VPC, Security Groups, Encrypted gp3 EBS) |
-| **Reverse Proxy** | Nginx Alpine (Edge routing, gzip compression, SPA history fallback) |
+| **Continuous Integration** | Jenkins LTS (JDK17), Declarative Pipeline-as-Code (`Jenkinsfile`), Git SCM Integration |
+| **Container Orchestration** | Kubernetes (v1.36 client), Pods, Deployments, ReplicaSets, RollingUpdates |
+| **Kubernetes Networking** | ClusterIP, NodePort, LoadBalancer, ExternalName, CoreDNS, kube-proxy |
+| **Kubernetes Storage & Config** | PersistentVolumes (PV), PersistentVolumeClaims (PVC), ConfigMaps, Secrets |
+| **Package Management** | Helm v3, Semantic Versioning, Values-driven Go templating, Release lifecycle |
+| **Configuration Management**| Ansible Core, YAML Playbooks, INI Inventory, OpenSSH transport, Idempotent execution |
+| **Reverse Proxy / Ingress** | Nginx Alpine (Edge routing, gzip compression, SPA history fallback) |
 
-## 5. System Architecture
+---
+
+## 6. System Architecture
 
 ```
                                   ┌──────────────────────────┐
                                   │       Client Users       │
                                   └────────────┬─────────────┘
                                                │
-                                               │ HTTP / HTTPS
+                                               │ HTTP / HTTPS (Port 3000 / 30080)
                                                ▼
-                             ┌───────────────────────────────────┐
-                             │       Nginx Reverse Proxy         │
-                             │       (Port 80 / Host: 3000)      │
-                             └─────────┬───────────────┬─────────┘
-                                       │               │
-                     Static Assets (/) │               │ API Proxy (/api/*)
-                                       ▼               ▼
-                        ┌──────────────────┐   ┌──────────────────┐
-                        │  React 19 Vite   │   │  Express.js API  │
-                        │  Production SPA  │   │  (Port 5000)     │
-                        └──────────────────┘   └────────┬─────────┘
-                                                        │
-                                                        │ Mongoose Driver (TCP)
-                                                        ▼
-                                               ┌──────────────────┐
-                                               │   MongoDB 7.0    │
-                                               │   (Port 27017)   │
-                                               └────────┬─────────┘
-                                                        │
-                                                        ▼ Mount: /data/db
-                                               ┌──────────────────┐
-                                               │  Named Volume    │
-                                               │  (Persistent)    │
-                                               └──────────────────┘
+                              ┌───────────────────────────────────┐
+                              │       Nginx Reverse Proxy /       │
+                              │       Kubernetes NodePort Svc     │
+                              └─────────┬───────────────┬─────────┘
+                                        │               │
+                      Static Assets (/) │               │ API Calls (/api/*)
+                                        ▼               ▼
+                         ┌──────────────────┐   ┌──────────────────┐
+                         │  React 19 Vite   │   │  Express.js API  │
+                         │  Production SPA  │   │  (Port 5000)     │
+                         └──────────────────┘   └────────┬─────────┘
+                                                         │
+                                                         │ Mongoose Driver (TCP: 27017)
+                                                         ▼
+                                                ┌──────────────────┐
+                                                │   MongoDB 7.0    │
+                                                │   (Port 27017)   │
+                                                └────────┬─────────┘
+                                                         │
+                                                         ▼ Persistent Storage
+                                                ┌──────────────────┐
+                                                │  Named Volume /  │
+                                                │  K8s Storage PVC │
+                                                └──────────────────┘
 ```
 
-## 6. Repository Structure
+---
+
+## 7. Repository Structure
 
 ```text
 BOT-MERN-Gynecare-Hospital-Management-System-/
-├── compose.yaml                          # Master Docker Compose multi-container orchestrator
+├── compose.yaml                          # Master Docker Compose multi-container stack
 ├── Dockerfile                            # Production backend container definition
+├── Jenkinsfile                           # 5-Stage Declarative CI Pipeline-as-Code
 ├── .dockerignore                         # Backend build context exclusions
 ├── .env.example                          # Secret-free environment variable template
 ├── package.json                          # Workspace root scripts
@@ -86,6 +143,10 @@ BOT-MERN-Gynecare-Hospital-Management-System-/
 │   ├── models/                           # Mongoose data schemas
 │   ├── routes/                           # API route handlers
 │   └── utils/seed.js                     # Seed data initialization utility
+├── docker/                               # Supporting Container Environments
+│   └── jenkins/                          # Dockerized Jenkins LTS laboratory
+│       ├── compose.yaml                  # Jenkins LTS controller service definition
+│       └── README.md                     # Jenkins lab setup & authentication guide
 ├── infrastructure/                       # Cloud & IaC Configurations
 │   └── terraform/aws-ec2/                # Terraform EC2 provisioning module
 │       ├── versions.tf                   # Terraform and provider constraints
@@ -94,184 +155,199 @@ BOT-MERN-Gynecare-Hospital-Management-System-/
 │       ├── main.tf                       # EC2 and Security Group resources
 │       ├── outputs.tf                    # Computed infrastructure outputs
 │       └── terraform.tfvars.example      # Variable values template
-├── docs/                                 # Detailed DevOps Technical Documentation
+├── helm/                                 # Kubernetes Application Packaging
+│   └── gynecare/                         # Enterprise Helm Chart for GyneCare
+│       ├── Chart.yaml                    # Chart metadata and semantic versioning
+│       ├── values.yaml                   # Central parameterization schema
+│       └── templates/                    # Go-templated Kubernetes manifests
+│           ├── _helpers.tpl              # Reusable template helper definitions
+│           ├── configmap.yaml            # Application configuration
+│           ├── secret.yaml               # Database credentials
+│           ├── pvc.yaml                  # Persistent storage claim for MongoDB
+│           ├── deployment-frontend.yaml  # React Nginx Deployment with probes
+│           ├── service-frontend.yaml     # NodePort Service (Port 30080)
+│           ├── deployment-backend.yaml   # Express REST API Deployment
+│           ├── service-backend.yaml      # ClusterIP Service (Port 5000)
+│           ├── deployment-mongo.yaml     # MongoDB Stateful Deployment
+│           ├── service-mongo.yaml        # Internal ClusterIP Service (Port 27017)
+│           └── NOTES.txt                 # Post-installation instructions
+├── kubernetes/                           # Raw Declarative Kubernetes Manifests
+│   └── assignment-08/                    # Core Kubernetes Objects Specification
+│       ├── namespace.yaml                # Isolated devops namespace
+│       ├── pod.yaml                      # Atomic Pod manifest
+│       ├── deployment.yaml               # 3-replica Deployment with rolling update
+│       ├── service-clusterip.yaml        # Internal East-West service
+│       ├── service-nodeport.yaml         # External NodePort service
+│       ├── configmap.yaml                # Application environment config
+│       ├── secret.example.yaml           # Secret template (Base64 lab credentials)
+│       ├── persistentvolume.yaml         # HostPath PersistentVolume
+│       └── persistentvolumeclaim.yaml    # Storage claim for database persistence
+├── ansible/                              # Infrastructure Configuration Management
+│   └── assignment-08/                    # Automated Nginx Web Server Case Study
+│       ├── ansible.cfg                   # Engine configuration and transport tuning
+│       ├── inventory.ini                 # INI inventory defining the 3-node target fleet
+│       ├── install-nginx.yml             # Idempotent Nginx deployment playbook
+│       ├── docker-compose.ansible-lab.yaml# 4-node containerized testbed (1 control + 3 targets)
+│       ├── README.md                     # Execution and idempotency verification guide
+│       └── files/
+│           └── index.html                # Custom GyneCare portal landing page
+├── docs/                                 # Comprehensive Academic Technical Documentation
 │   ├── assignment-1/                     # MERN Baseline & System Architecture
 │   ├── assignment-2/                     # AWS EC2 Cloud Deployment
 │   ├── assignment-3/                     # Terraform Infrastructure as Code
 │   ├── assignment-4/                     # Docker Application Containerization
-│   └── assignment-5/                     # Docker Compose Multi-Container Orchestration
-└── evidence/                             # Verification Registers & Execution Proofs
+│   ├── assignment-5/                     # Docker Compose Multi-Container Orchestration
+│   ├── assignment-6/                     # Jenkins CI Integration with GitHub
+│   ├── assignment-7/                     # Kubernetes Architecture and Helm
+│   ├── assignment-8/                     # Kubernetes Objects & Ansible Automation
+│   ├── assignment-9/                     # Container Orchestration & Helm Packaging
+│   └── assignment-10/                    # Kubernetes Core Objects & Networking Services
+└── evidence/                             # Verification Registers & Screenshot Evidence Guides
+    ├── assignment-2/                     # AWS EC2 verification
+    ├── assignment-3/                     # Terraform verification
+    ├── assignment-4/                     # Docker build and container verification
+    ├── assignment-5/                     # Compose stack verification
+    ├── assignment-6/                     # Jenkins Freestyle & Pipeline verification
+    ├── assignment-7/                     # Kubernetes & Helm lifecycle verification
+    ├── assignment-8/                     # K8s objects & Ansible idempotency verification
+    ├── assignment-9/                     # Helm compilation & release verification
+    └── assignment-10/                    # K8s service routing & storage verification
 ```
 
-## 7. Application Components
-1. **Frontend Service**: Hosted via Nginx on port 3000. Delivers the client SPA with seamless client-side routing and reverse-proxies `/api/` calls internally to the backend.
-2. **Backend Service**: Listens on port 5000. Provides health probes (`/api/health`), authentication, and REST resources for appointments, doctors, hospitals, and blogs.
-3. **Database Service**: MongoDB 7.0 engine storing all persistent healthcare records on an isolated network.
+---
 
-## 8. Local Development Setup
+## 8. DevOps Assignments Directory & Documentation Links
 
-### Prerequisites
-- Node.js (v18.0.0 or higher)
-- npm (v9.0.0 or higher)
-- MongoDB (v6.0 or higher) running on `localhost:27017`
+The table below provides direct links to the comprehensive academic documentation reports for all ten DevOps assignments:
 
-### Step-by-Step Run
-```bash
-# 1. Clone repository
-git clone https://github.com/AnushkaSomawanshi/DevOps-Assignments-.git
-cd DevOps-Assignments-/BOT-MERN-Gynecare-Hospital-Management-System-
-
-# 2. Configure Backend
-cd server
-npm install
-node server.js
-
-# 3. Configure Frontend (in a separate terminal)
-cd ../client
-npm install
-npm run dev
-```
-Frontend development server: `http://localhost:5173`  
-Backend development server: `http://localhost:5000`
-
-## 9. Environment Configuration
-Copy `.env.example` to create your local `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-| Variable | Default Value | Description |
-|---|---|---|
-| `PORT` | `5000` | Port for the Express backend server |
-| `FRONTEND_PORT` | `3000` | Published port for frontend web container |
-| `MONGO_PORT` | `27017` | Published port for MongoDB database |
-| `MONGO_DATABASE` | `hospitalDB` | Target database name |
-| `MONGO_URI` | `mongodb://127.0.0.1:27017/hospitalDB` | Local bare-metal connection URI |
-| `GEMINI_API_KEY` | *(optional)* | API key for healthcare assistant |
-
-## 10. Docker Setup
-The repository provides a production-grade, Alpine-based `Dockerfile` with layer caching, curl healthchecks, and non-privileged execution under `gynecareuser`.
-
-## 11. Docker Compose Setup
-The multi-container configuration in `compose.yaml` coordinates:
-- `mongodb` service with healthcheck ping and named volume `gynecare_mongodb_data`.
-- `backend` service with healthcheck curl, environment injection, and `depends_on: mongodb: condition: service_healthy`.
-- `frontend` service with multi-stage Nginx build, port mapping `3000:80`, and `depends_on: backend: condition: service_healthy`.
-- `gynecare-network` isolated bridge network for DNS service discovery.
-
-## 12. Terraform / Infrastructure Setup
-Located in `infrastructure/terraform/aws-ec2/`, Terraform automates AWS cloud hosting:
-- Provisions an EC2 virtual machine (`t3.micro` or `t2.micro`).
-- Attaches an encrypted 20 GiB `gp3` Elastic Block Store (EBS) root volume.
-- Creates a dedicated AWS Security Group allowing restricted SSH (Port 22) and web traffic (Ports 80/443).
-- Exposes computed metadata via `outputs.tf`.
-
-## 13. How to Run the Application (Bare-Metal)
-```bash
-# Start backend
-cd server && npm install && npm start
-
-# In separate terminal, start frontend
-cd client && npm install && npm run dev
-```
-
-## 14. How to Run with Docker (Assignment 4)
-Run the backend application inside an isolated Docker container:
-
-```bash
-# 1. Build image
-docker build -t gynecare-app:v1 .
-
-# 2. Run container with port forwarding
-docker run -d -p 5000:5000 --name gynecare-container gynecare-app:v1
-
-# 3. Verify health
-curl http://localhost:5000/api/health
-
-# 4. View container logs
-docker logs -f gynecare-container
-
-# 5. Stop and clean up container
-docker stop gynecare-container && docker rm gynecare-container
-```
-
-## 15. How to Run with Docker Compose (Assignment 5)
-Spin up the complete multi-container stack with a single command:
-
-```bash
-# 1. Validate configuration
-docker compose config
-
-# 2. Build service images
-docker compose build
-
-# 3. Start entire stack in detached mode
-docker compose up -d
-
-# 4. Check running services
-docker compose ps
-
-# 5. Access application
-# Web App UI: http://localhost:3000
-# Backend API: http://localhost:5000/api/health
-# Database Seeded Records: http://localhost:5000/api/doctors
-
-# 6. View logs across all services
-docker compose logs -f
-
-# 7. Stop stack (safeguards persistent volume)
-docker compose down
-```
-
-## 16. Important Ports
-
-| Port | Service | Container Host | Function |
-|---|---|---|---|
-| `3000` | Frontend Web UI | `gynecare-frontend` | Nginx HTTP entrypoint for users |
-| `5000` | Express REST API | `gynecare-backend` | Healthchecks, authentication, CRUD APIs |
-| `27017`| MongoDB Database | `gynecare-mongodb` | Internal document storage |
-| `22`   | SSH Access (EC2)| Host Machine | Administrative remote terminal access |
-
-## 17. Important Environment Variables
-- `PORT`: Specifies application server listening port.
-- `MONGO_URI`: Formats the database connection string. In Compose, set to `mongodb://mongodb:27017/hospitalDB`.
-- `NODE_ENV`: Set to `production` in container environments.
-- `AWS_REGION`: Defines deployment region for Terraform (`us-east-1`).
-
-## 18. DevOps Assignments Overview
-
-| Assignment | Topic | Focus | Primary Location | Detailed Guide |
+| Assignment | Topic | Focus | Primary Implementation | Comprehensive Technical Report |
 |---|---|---|---|---|
-| **Assignment 1** | MERN Base Application | Three-tier architecture, React frontend, Express API, MongoDB seeding | `client/`, `server/` | [Assignment 1 Docs](docs/assignment-1/assignment-1-documentation.md) |
-| **Assignment 2** | Cloud Computing (AWS EC2) | Virtual machine lifecycle, VPC, Security Groups, SSH, manual hosting | `docs/assignment-2/` | [Assignment 2 Docs](docs/assignment-2/assignment-2-documentation.md) |
-| **Assignment 3** | Infrastructure as Code | HashiCorp Terraform automation for EC2 and Security Groups | `infrastructure/terraform/aws-ec2/` | [Assignment 3 Docs](docs/assignment-3/assignment-3-documentation.md) |
-| **Assignment 4** | Application Containerization | Alpine Dockerfile, `.dockerignore`, image build, container lifecycle, healthcheck | `Dockerfile`, `.dockerignore` | [Assignment 4 Docs](docs/assignment-4/assignment-4-documentation.md) |
-| **Assignment 5** | Multi-Container Orchestration | Docker Compose (`compose.yaml`), Nginx reverse proxy, named volumes, custom bridge | `compose.yaml`, `client/Dockerfile` | [Assignment 5 Docs](docs/assignment-5/assignment-5-documentation.md) |
+| **Assignment 1** | MERN Base Application | Three-tier architecture, React frontend, Express API, MongoDB seeding | `client/`, `server/` | [Assignment 1 Documentation](docs/assignment-1/assignment-1-documentation.md) |
+| **Assignment 2** | Cloud Computing (AWS EC2) | Virtual machine lifecycle, VPC, Security Groups, SSH, manual hosting | `docs/assignment-2/` | [Assignment 2 Documentation](docs/assignment-2/assignment-2-documentation.md) |
+| **Assignment 3** | Infrastructure as Code | HashiCorp Terraform automation for EC2 and Security Groups | `infrastructure/terraform/aws-ec2/` | [Assignment 3 Documentation](docs/assignment-3/assignment-3-documentation.md) |
+| **Assignment 4** | Application Containerization | Alpine Dockerfile, `.dockerignore`, image build, container lifecycle, healthcheck | `Dockerfile`, `.dockerignore` | [Assignment 4 Documentation](docs/assignment-4/assignment-4-documentation.md) |
+| **Assignment 5** | Multi-Container Orchestration | Docker Compose (`compose.yaml`), Nginx reverse proxy, named volumes, custom bridge | `compose.yaml`, `client/Dockerfile` | [Assignment 5 Documentation](docs/assignment-5/assignment-5-documentation.md) |
+| **Assignment 6** | Jenkins CI Integration | Jenkins LTS in Docker, Freestyle SCM Job (`GitHub-Jenkins-Demo`), 5-Stage Declarative `Jenkinsfile` | `Jenkinsfile`, `docker/jenkins/` | [Assignment 6 Documentation](docs/assignment-6/assignment-6-documentation.md) |
+| **Assignment 7** | Kubernetes & Helm | Control-plane & worker node architecture, multi-tier GyneCare Helm chart, release lifecycle | `helm/gynecare/` | [Assignment 7 Documentation](docs/assignment-7/assignment-7-documentation.md) |
+| **Assignment 8** | Kubernetes Objects & Ansible | Core K8s primitives (Pod, Deployment, SVC, PV/PVC) + Ansible 3-node Nginx automation | `kubernetes/assignment-08/`, `ansible/assignment-08/` | [Assignment 8 Documentation](docs/assignment-8/assignment-8-documentation.md) |
+| **Assignment 9** | Container Orchestration & Helm | Deep-dive Helm compilation mechanics (`Chart.yaml`, `values.yaml`, `templates/`), upgrades & rollbacks | `helm/gynecare/` | [Assignment 9 Documentation](docs/assignment-9/assignment-9-documentation.md) |
+| **Assignment 10**| Kubernetes Objects & Services | Exhaustive service comparison (ClusterIP, NodePort, LoadBalancer, ExternalName), ingress & storage | `kubernetes/assignment-08/` | [Assignment 10 Documentation](docs/assignment-10/assignment-10-documentation.md) |
 
-## 19. Documentation Locations
-Comprehensive technical reports with architectural diagrams, command outputs, and troubleshooting matrices are located in:
-- [Assignment 1 — Base Application Architecture](docs/assignment-1/README.md)
-- [Assignment 2 — AWS EC2 Deployment](docs/assignment-2/README.md)
-- [Assignment 3 — Terraform Infrastructure as Code](docs/assignment-3/README.md)
-- [Assignment 4 — Docker Application Containerization](docs/assignment-4/README.md)
-- [Assignment 5 — Multi-Container Docker Compose](docs/assignment-5/README.md)
+---
 
-## 20. Security Notes
-- **Zero Secrets in Git**: No API keys, passwords, private SSH keys, or AWS access tokens are committed to source control.
-- **Ignored State**: `terraform.tfstate`, `.env`, and `node_modules` are explicitly excluded via `.gitignore`.
-- **Non-Root Containers**: Docker images run under dedicated unprivileged users (`gynecareuser`).
-- **Network Isolation**: MongoDB is protected within the private Docker bridge network (`gynecare-network`).
-- **Encrypted Storage**: EBS storage on AWS is encrypted at rest using AES-256 (`gp3`).
+## 9. Quickstart: Running the DevOps Workflows
 
-## 21. Troubleshooting
+### 9.1 Docker Compose Full Stack (Assignment 5)
+```bash
+# Validate configuration and start all services
+docker compose config
+docker compose up -d --build
 
-| Issue | Cause | Solution |
+# Access endpoints:
+# Web UI: http://localhost:3000
+# Backend API: http://localhost:5000/api/health
+```
+
+### 9.2 Jenkins Continuous Integration Lab (Assignment 6)
+```bash
+# Start Jenkins LTS in containerized laboratory
+docker compose -f docker/jenkins/compose.yaml up -d
+
+# Retrieve initial administrative unlocking password
+docker exec -it gynecare_jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+# Access Jenkins Dashboard at: http://localhost:8080
+# Run Freestyle Job: GitHub-Jenkins-Demo
+# Run Pipeline Job using root: Jenkinsfile
+```
+
+### 9.3 Kubernetes Application Deployment via Helm (Assignments 7 & 9)
+```bash
+# 1. Lint chart and test rendering
+helm lint ./helm/gynecare
+helm template gynecare ./helm/gynecare --namespace devops
+
+# 2. Deploy application release
+helm install gynecare ./helm/gynecare --namespace devops --create-namespace
+
+# 3. View running workloads and services
+kubectl get pods,services,pvc -n devops
+
+# 4. Perform zero-downtime rolling update
+helm upgrade gynecare ./helm/gynecare --set frontend.replicaCount=3 -n devops
+
+# 5. Teardown release
+helm uninstall gynecare -n devops
+```
+
+### 9.4 Kubernetes Core Objects Deployment (Assignments 8 & 10)
+```bash
+# Apply namespace and declarative manifests
+kubectl apply -f kubernetes/assignment-08/namespace.yaml
+kubectl apply -f kubernetes/assignment-08/
+
+# Verify objects
+kubectl get all,cm,secret,pv,pvc -n devops
+```
+
+### 9.5 Ansible Multi-Server Automation Lab (Assignment 8)
+```bash
+# 1. Start the 4-node containerized testbed (1 control node + 3 target nodes)
+docker compose -f ansible/assignment-08/docker-compose.ansible-lab.yaml up -d
+
+# 2. Test fleet connectivity
+docker exec -it ansible_control_node ansible all -i inventory.ini -m ping
+
+# 3. Execute automated Nginx deployment playbook
+docker exec -it ansible_control_node ansible-playbook -i inventory.ini install-nginx.yml
+
+# 4. Verify idempotency by executing a second time (changed=0)
+docker exec -it ansible_control_node ansible-playbook -i inventory.ini install-nginx.yml
+
+# 5. Verify HTTP service on mapped ports
+curl http://localhost:8081
+curl http://localhost:8082
+curl http://localhost:8083
+```
+
+---
+
+## 10. Important Ports Reference
+
+| Port | Service | Host / Interface | Role |
+|---|---|---|---|
+| `3000` | Frontend Web UI (Compose) | `localhost:3000` | Nginx SPA HTTP web client |
+| `5000` | Backend API (Compose) | `localhost:5000` | Express REST API & health probes |
+| `27017`| MongoDB Database (Compose) | `localhost:27017` | Persistent document storage |
+| `8080` | Jenkins Controller | `localhost:8080` | Jenkins web dashboard and automation engine |
+| `50000`| Jenkins JNLP Inbound Port | `localhost:50000` | Dynamic build agent connection interface |
+| `30080`| Kubernetes Frontend Service | `localhost:30080` | NodePort external access for React SPA |
+| `8081` | Ansible Managed Node 1 | `localhost:8081` | Nginx web server on `nginx-01` |
+| `8082` | Ansible Managed Node 2 | `localhost:8082` | Nginx web server on `nginx-02` |
+| `8083` | Ansible Managed Node 3 | `localhost:8083` | Nginx web server on `nginx-03` |
+
+---
+
+## 11. Security & Compliance Principles
+- **Strictly Zero Secrets in Git**: Passwords, tokens, SSH private keys, and AWS access keys are excluded from source control. Secret files are templatized as `.env.example` and `secret.example.yaml`.
+- **Base64 vs Cryptographic Encryption**: Base64 encoding used in Kubernetes Secret manifests is documented as an obfuscation format, highlighting the architectural requirement for KMS envelope encryption and external secret managers in production.
+- **Unprivileged Container Execution**: Docker containers run under dedicated unprivileged users (`gynecareuser`) to prevent container breakout exploits.
+- **Network Micro-Segmentation**: MongoDB is shielded within isolated networks, accessible exclusively through internal ClusterIP or dedicated Docker bridge networks.
+- **Transport Security & SSH Hardening**: Ansible configuration management operates over secure OpenSSH transport with strictly managed credentials.
+
+---
+
+## 12. Troubleshooting Guide
+
+| Issue / Failure | Possible Root Cause | Resolution Command / Action |
 |---|---|---|
-| Port collision on 5000 / 3000 | Existing process running on host | Set `PORT=5001 FRONTEND_PORT=3001 docker compose up -d` or kill conflicting PID |
-| MongoDB connection deferred | Database container still starting | The backend features automatic retry logic; check health via `docker compose ps` |
-| White screen on frontend | Missing Nginx SPA fallback | Nginx includes `try_files $uri $uri/ /index.html;` in `client/nginx.conf` |
-| Build context too large | `node_modules` not ignored | Verify `.dockerignore` contains `**/node_modules` |
+| **Port 5000 or 3000 already in use** | Stray local process running on port | Adjust published ports in `.env` or run `netstat -ano \| findstr :5000` to terminate conflicting PID. |
+| **Jenkins SCM checkout fails** | Git plugin missing or network timeout | Ensure Git and GitHub plugins are enabled in Jenkins; verify repository URL: `https://github.com/AnushkaSomawanshi/DevOps-Assignments-.git`. |
+| **Helm template parsing failure** | YAML indentation or invalid variable tag | Execute `helm template --debug ./helm/gynecare` to pinpoint exact syntax error in `templates/`. |
+| **Kubernetes Service has no endpoints** | Service selector mismatch with Pod labels | Inspect `kubectl describe svc <service-name> -n devops` and align `spec.selector` with `spec.template.metadata.labels`. |
+| **Ansible SSH Ping Fails** | Container target SSH service offline | Run `docker compose -f ansible/assignment-08/docker-compose.ansible-lab.yaml ps` and verify ports 2201-2203 are bound. |
 
-## 22. Conclusion & Summary
-The GyneCare DevOps project represents a complete, professional engineering progression: starting from a full-stack MERN application, migrating to cloud infrastructure concepts, defining infrastructure as code with Terraform, containerizing application components with Docker, and orchestrating resilient multi-tier microservices with Docker Compose.
+---
+
+## 13. Conclusion
+The GyneCare DevOps repository delivers a cohesive, industry-standard implementation spanning the entire software delivery and infrastructure management lifecycle. Through Assignments 1 to 10, the project demonstrates how modern engineering organizations transition monolithic codebases into containerized, automatically tested, declaratively provisioned, and resiliently orchestrated cloud-native systems.

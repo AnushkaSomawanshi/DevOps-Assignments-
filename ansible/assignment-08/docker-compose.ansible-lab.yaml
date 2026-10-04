@@ -1,0 +1,86 @@
+# ==============================================================================
+# Ansible Laboratory Multi-Node Environment (Docker Compose)
+# Assignment 8: Automated Configuration Management Case Study
+# ==============================================================================
+# Architecture:
+#   ansible-control (Ubuntu + Ansible + SSH client)
+#       |--- SSH ---> nginx-01 (172.28.0.11, mapped host port 8081)
+#       |--- SSH ---> nginx-02 (172.28.0.12, mapped host port 8082)
+#       |--- SSH ---> nginx-03 (172.28.0.13, mapped host port 8083)
+# ==============================================================================
+
+services:
+  # Target Managed Node 1
+  nginx-01:
+    image: rastasheep/ubuntu-sshd:18.04
+    container_name: ansible_nginx_01
+    hostname: nginx-01
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+      - "2201:22"
+    networks:
+      ansible_net:
+        ipv4_address: 172.28.0.11
+    environment:
+      - ROOT_PASSWORD=root
+    command: /usr/sbin/sshd -D
+
+  # Target Managed Node 2
+  nginx-02:
+    image: rastasheep/ubuntu-sshd:18.04
+    container_name: ansible_nginx_02
+    hostname: nginx-02
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+      - "2202:22"
+    networks:
+      ansible_net:
+        ipv4_address: 172.28.0.12
+    environment:
+      - ROOT_PASSWORD=root
+    command: /usr/sbin/sshd -D
+
+  # Target Managed Node 3
+  nginx-03:
+    image: rastasheep/ubuntu-sshd:18.04
+    container_name: ansible_nginx_03
+    hostname: nginx-03
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+      - "2203:22"
+    networks:
+      ansible_net:
+        ipv4_address: 172.28.0.13
+    environment:
+      - ROOT_PASSWORD=root
+    command: /usr/sbin/sshd -D
+
+  # Ansible Control Node
+  ansible-control:
+    image: cytopia/ansible:latest
+    container_name: ansible_control_node
+    hostname: ansible-control
+    restart: "no"
+    depends_on:
+      - nginx-01
+      - nginx-02
+      - nginx-03
+    networks:
+      ansible_net:
+        ipv4_address: 172.28.0.10
+    volumes:
+      - .:/ansible
+    working_dir: /ansible
+    command: tail -f /dev/null
+
+networks:
+  ansible_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1

@@ -1,0 +1,30 @@
+# ==============================================================================
+# GyneCare DevOps Project - Jenkins Automation Server (Assignment 6)
+# Reproducible local Jenkins LTS container environment
+# ==============================================================================
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: gynecare-jenkins
+    restart: unless-stopped
+    ports:
+      - "${JENKINS_PORT:-8080}:8080"
+      - "${JENKINS_AGENT_PORT:-50000}:50000"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      # Mount Docker socket if container-in-container execution is desired
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - jenkins-network
+
+volumes:
+  jenkins_home:
+    name: gynecare_jenkins_home
+
+networks:
+  jenkins-network:
+    name: gynecare-jenkins-net
+    driver: bridge

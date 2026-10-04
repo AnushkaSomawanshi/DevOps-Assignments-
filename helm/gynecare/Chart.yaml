@@ -1,0 +1,15 @@
+apiVersion: v2
+name: gynecare
+description: Enterprise Helm Chart for GyneCare Hospital Management System (Frontend, Backend, MongoDB)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Anushka Somawanshi
+    email: devops@gynecare.internal
+keywords:
+  - healthcare
+  - hospital-management
+  - mern
+  - kubernetes
+  - helm

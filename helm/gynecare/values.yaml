@@ -1,0 +1,96 @@
+# ==============================================================================
+# GyneCare Helm Chart Values Configuration
+# ==============================================================================
+
+# Global Configuration
+global:
+  environment: production
+  appName: gynecare
+
+# ------------------------------------------------------------------------------
+# Frontend Service Configuration (React SPA / Nginx)
+# ------------------------------------------------------------------------------
+frontend:
+  replicaCount: 2
+  image:
+    repository: gynecare-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  probes:
+    liveness:
+      path: /
+      initialDelaySeconds: 10
+      periodSeconds: 15
+    readiness:
+      path: /
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+# ------------------------------------------------------------------------------
+# Backend Service Configuration (Node.js / Express API)
+# ------------------------------------------------------------------------------
+backend:
+  replicaCount: 2
+  image:
+    repository: gynecare-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    port: 5000
+    nodeEnv: production
+    geminiApiKey: ""
+  probes:
+    liveness:
+      path: /api/health
+      initialDelaySeconds: 15
+      periodSeconds: 15
+    readiness:
+      path: /api/health
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+# ------------------------------------------------------------------------------
+# Database Configuration (MongoDB)
+# ------------------------------------------------------------------------------
+mongodb:
+  image:
+    repository: mongo
+    tag: "7.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 27017
+  database: hospitalDB
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 5Gi

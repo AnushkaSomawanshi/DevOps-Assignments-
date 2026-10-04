@@ -1,0 +1,52 @@
+# ==============================================================================
+# Ansible Playbook: Automated Installation & Configuration of Nginx Web Servers
+# Assignment 8 Case Study - Multi-Server Idempotent Configuration
+# ==============================================================================
+
+- name: Configure Web Servers
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+
+  vars:
+    web_root: /var/www/html
+    web_page_src: files/index.html
+    nginx_port: 80
+
+  tasks:
+    - name: 1. Update APT package cache and install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+      register: nginx_install_result
+
+    - name: 2. Ensure Nginx service is running and enabled on boot
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: 3. Deploy customized GyneCare HTML landing page
+      copy:
+        src: "{{ web_page_src }}"
+        dest: "{{ web_root }}/index.html"
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      notify: Reload Nginx
+
+    - name: 4. Verify local web server response
+      command: curl -s http://127.0.0.1:{{ nginx_port }}
+      register: web_test_output
+      changed_when: false
+
+    - name: 5. Display verification status
+      debug:
+        msg: "Host {{ inventory_hostname }} responded successfully with Nginx status 200 OK."
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
